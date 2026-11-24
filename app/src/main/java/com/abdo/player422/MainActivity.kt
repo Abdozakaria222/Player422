@@ -404,7 +404,29 @@ class MainActivity : Activity() {
                 }
             }
             .setNegativeButton("إلغاء", null)
+            .setNeutralButton("فحص الجهاز") { _, _ -> showDeviceCheck() }
             .show()
+    }
+
+    private fun showDeviceCheck() {
+        val tv = TextView(this).apply {
+            text = "جاري الفحص…"
+            setTextColor(Color.WHITE)
+            textSize = 15f
+            setPadding(40, 24, 40, 24)
+            setTextIsSelectable(true)
+        }
+        val scroll = android.widget.ScrollView(this).apply { addView(tv); isFocusable = true }
+        AlertDialog.Builder(this)
+            .setTitle("فحص الجهاز – صوّر الشاشة دي")
+            .setView(scroll)
+            .setPositiveButton("تم", null)
+            .show()
+        scroll.requestFocus()
+        Thread {
+            val r = try { DeviceCheck.run(this) } catch (e: Exception) { "خطأ: ${e.message}" }
+            ui.post { tv.text = r }
+        }.start()
     }
 
     // ---------------------------------------------------------------- remote keys
