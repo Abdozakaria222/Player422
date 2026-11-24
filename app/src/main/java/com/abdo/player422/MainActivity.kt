@@ -421,7 +421,16 @@ class MainActivity : Activity() {
             .setTitle("فحص الجهاز – صوّر الشاشة دي")
             .setView(scroll)
             .setPositiveButton("تم", null)
-            .show()
+            .setNeutralButton("فحص Root", null)
+            .show().also { d ->
+                d.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+                    tv.text = "جاري الفحص بالـ Root… لو ظهرت رسالة سماح، دوس سماح"
+                    Thread {
+                        val r = DeviceCheck.runRoot()
+                        ui.post { tv.text = r; scroll.scrollTo(0, 0) }
+                    }.start()
+                }
+            }
         scroll.requestFocus()
         Thread {
             val r = try { DeviceCheck.run(this) } catch (e: Exception) { "خطأ: ${e.message}" }

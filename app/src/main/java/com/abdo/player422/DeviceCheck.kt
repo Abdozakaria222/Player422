@@ -73,6 +73,36 @@ object DeviceCheck {
         return sb.toString()
     }
 
+    /** Deep check using root (su). The receiver will ask to allow root – press Allow. */
+    fun runRoot(): String {
+        val script = """
+            echo '== id =='; id
+            echo '== tuner nodes =='
+            ls -l /dev 2>/dev/null | grep -iE 'dvb|demux|dmx|tuner|front|tsi|tsp|tsin|goke|gk|gx|hi_|ca[0-9]|sci|smart|av'
+            ls -lR /dev/dvb* 2>/dev/null
+            echo '== props =='
+            getprop | grep -iE 'dvb|tuner|goke|kunlun|tiar|frontend|demod' | head -30
+            echo '== listening ports =='
+            (netstat -tlnp 2>/dev/null || ss -tlnp 2>/dev/null) | head -40
+            echo '== tv app procs =='
+            ps -A 2>/dev/null | grep -iE 'tiar|dvb|goke|dlna|tv' | head -20
+            echo '== tv app libs =='
+            ls /data/app/*/com.tiartoptv.dvb*/lib/* 2>/dev/null | head -30
+            ls /system/lib 2>/dev/null | grep -iE 'dvb|tuner|demux|frontend|goke|gk|tiar' | head -30
+            echo '== selinux =='; getenforce
+        """.trimIndent()
+        return try {
+            val p = ProcessBuilder("su", "-c", script).redirectErrorStream(true).start()
+            val out = StringBuilder()
+            val t = Thread { p.inputStream.bufferedReader().forEachLine { out.appendLine(it) } }
+            t.start(); t.join(20000)
+            p.destroy()
+            out.toString().ifBlank { "مفيش رد من su (اتأكد إنك دوست سماح)" }
+        } catch (e: Exception) {
+            "su مش شغال: ${e.message}"
+        }
+    }
+
     private fun yn(b: Boolean) = if (b) "✓" else "✗"
 
     private fun prop(name: String): String = try {
