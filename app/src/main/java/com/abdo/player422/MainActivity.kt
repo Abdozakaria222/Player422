@@ -384,7 +384,7 @@ class MainActivity : Activity() {
         }
         box.addView(url); box.addView(auto); box.addView(deint); box.addView(hw)
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
             .setTitle("Player 422 – الإعدادات")
             .setView(box)
             .setPositiveButton("حفظ وتشغيل") { _, _ ->
@@ -417,7 +417,7 @@ class MainActivity : Activity() {
             setTextIsSelectable(true)
         }
         val scroll = android.widget.ScrollView(this).apply { addView(tv); isFocusable = true }
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
             .setTitle("فحص الجهاز – صوّر الشاشة دي")
             .setView(scroll)
             .setPositiveButton("تم", null)
