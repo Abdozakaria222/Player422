@@ -28,7 +28,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Player422-APK
-          path: app/build/outputs/apk/release/*.apk
+          path: |
+            app/build/outputs/apk/release/*.apk
+            launcher/build/outputs/apk/release/*.apk
 
       - name: Publish APK as a release (direct download link)
         if: github.ref == 'refs/heads/main'
@@ -38,4 +40,6 @@ jobs:
           name: Player 422 (latest)
           prerelease: false
           make_latest: true
-          files: app/build/outputs/apk/release/*.apk
+          files: |
+            app/build/outputs/apk/release/*.apk
+            launcher/build/outputs/apk/release/*.apk

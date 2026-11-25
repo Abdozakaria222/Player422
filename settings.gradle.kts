@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Player422"
-include(":app")
+include(":app", ":launcher")
